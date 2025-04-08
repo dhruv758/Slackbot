@@ -1,1 +1,17 @@
 node_modules/
+dist/
+*.log
+*.env       
+
+*.DS_Store
+*.swp
+*.swo
+*.swn
+
+
+# Ignore all files in the all_files directory
+# except for the .gitkeep file
+all_files/*
+# Ignore all files in the dist directory
+# except for the .gitkeep file
+dist/*
