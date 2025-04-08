@@ -16,19 +16,16 @@ exports.handleVote = async (slackApp, user_id, username, choice, poll_id) => {
       console.error(`❌ Poll not found with poll_id: ${poll_id}`);
       return false;
     }
-
-    // Insert or update vote
     await Vote.findOneAndUpdate(
       { poll_id, user_id },
       { username, choice, timestamp: new Date() },
       { upsert: true, new: true }
     );
-
     // Get updated vote counts
     const voteCounts = await exports.getVoteCounts(poll_id);
     const totalVotes = Object.values(voteCounts).reduce((sum, count) => sum + count, 0);
 
-    // Extract only option names
+    // Extract only option names not the url ;)
     const optionNames = poll.options.map(option => option.name);
 
     // Update the Slack message with new counts
@@ -96,7 +93,6 @@ exports.viewVoteDetails = async (poll_id) => {
       votesByChoice[vote.choice].push(vote.username);
     });
 
-    // Create blocks for the modal
     const blocks = [
       {
         type: "section",

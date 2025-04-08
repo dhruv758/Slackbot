@@ -17,8 +17,6 @@ async function sendPoll(req, res) {
     ) {
       return res.status(400).json({ error: "Options must include both name and url." });
     }
-
-    // Build Slack message blocks
     const blocks = [
       {
         type: "section",
@@ -55,7 +53,6 @@ async function sendPoll(req, res) {
       }
     ];
 
-    // Post message to Slack
     const result = await slackApp.client.chat.postMessage({
       token: process.env.SLACK_BOT_TOKEN,
       channel: process.env.SLACK_CHANNEL,
@@ -67,18 +64,15 @@ async function sendPoll(req, res) {
       throw new Error("Failed to send poll to Slack.");
     }
 
-    // Save poll in MongoDB
     await Poll.create({
       poll_id,
       message_ts: result.ts,
       channel_id: result.channel,
       title: "Food Poll",
-      options, // Array of { name, url }
+      options, 
       created_at: new Date(),
       expires_at: new Date(expires_at)
     });
-
-    // Set timeout to close the poll
     const delay = new Date(expires_at).getTime() - Date.now();
     setTimeout(() => closePoll(result.channel, result.ts, poll_id), delay);
 
@@ -121,8 +115,4 @@ async function getPollById(poll_id) {
   }
 }
 
-module.exports = {
-  sendPoll,
-  closePoll,
-  getPollById
-};
+module.exports = {sendPoll,closePoll,getPollById};
